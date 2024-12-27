@@ -5,6 +5,7 @@ import CardFeature from "../component/CardFeature";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import FilterProduct from "../component/FilterProduct";
 import AllProduct from "../component/AllProduct";
+import Clients from "../component/Client";
 
 const Home = () => {
   const productData = useSelector((state) => state.product.productList);
@@ -106,6 +107,7 @@ const Home = () => {
       </div>
 
       <AllProduct heading={"Your Product"} />
+      <Clients />
     </div>
   );
 };

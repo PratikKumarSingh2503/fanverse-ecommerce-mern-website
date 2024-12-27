@@ -29,8 +29,12 @@ const Header = () => {
 
       <div className='flex items-center h-full justify-between'>
         <Link to={""}>
-          <div className='h-12'>
+          <div className=' flex h-12 items-center'>
             <img src={logo} className="h-full" />
+            <p>
+              <span className='bg-gradient-to-r from-blue-500 to-purple-600'>Enigma Vault</span>
+              
+            </p>
           </div>
         </Link>
 
