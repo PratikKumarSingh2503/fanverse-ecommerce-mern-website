@@ -184,7 +184,7 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <nav className="md:hidden bg-white/50 backdrop-blur-md shadow-lg rounded-lg mt-2 py-2 text-right transition-all duration-900">
+        <nav className="md:hidden bg-white/50 backdrop-blur-md shadow-lg rounded-lg mt-2 ml-40 py-2 text-right transition-all duration-900">
           <Link
             to="/"
             className="block px-4 py-2 hover:bg-gray-100"
