@@ -17,10 +17,15 @@ const Header = () => {
   const handleLogout = () => {
     dispatch(logoutRedux());
     toast("Logout Successfully");
+    setShowMenu(false); // Close account menu on logout
   };
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false); // Close mobile menu after clicking any link
   };
 
   return (
@@ -31,39 +36,36 @@ const Header = () => {
           <img
             src={logo}
             alt="Enigma Vault"
-            className="h-11 hover:scale-110 transition-transform duration-300"
+            className="h-10 hover:scale-110 transition-transform duration-300"
           />
-          <div className="ml-2 mt-2 items-center">
-            <p className="text-lg font-bold bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text leading-none m-0">
-              Enigma Vault
-            </p>
-            <p className="ml-4 text-xs leading-none m-0 font-bold">Shop the Look</p>
-          </div>
+          <p className="ml-2 text-lg font-bold bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text">
+            Enigma Vault
+          </p>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-20">
+        <nav className="hidden md:flex items-center gap-10">
           <Link
             to="/"
-            className="hover:text-blue-500 hover:underline underline-offset-4 transition-all duration-200"
+            className="hover:text-blue-500 hover:underline underline-offset-4 transition-all duration-300"
           >
             Home
           </Link>
           <Link
             to="/menu/6519c8d1fa9856a0bf542ac8"
-            className="hover:text-blue-500 hover:underline underline-offset-4 transition-all duration-200"
+            className="hover:text-blue-500 hover:underline underline-offset-4 transition-all duration-300"
           >
             Menu
           </Link>
           <Link
             to="/about"
-            className="hover:text-blue-500 hover:underline underline-offset-4 transition-all duration-200"
+            className="hover:text-blue-500 hover:underline underline-offset-4 transition-all duration-300"
           >
             About
           </Link>
           <Link
             to="/contact"
-            className="hover:text-blue-500 hover:underline underline-offset-4 transition-all duration-200"
+            className="hover:text-blue-500 hover:underline underline-offset-4 transition-all duration-300"
           >
             Contact
           </Link>
@@ -72,7 +74,7 @@ const Header = () => {
         {/* Cart and Profile for Desktop */}
         <div className="hidden md:flex items-center gap-4">
           <Link to="/cart" className="relative text-2xl text-slate-600">
-            <BsCartFill className="hover:text-blue-500 transition-colors duration-200" />
+            <BsCartFill className="hover:text-blue-500 transition-colors duration-300" />
             <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
               {cartItemNumber.length}
             </div>
@@ -141,6 +143,35 @@ const Header = () => {
             ) : (
               <HiOutlineUserCircle className="text-3xl" />
             )}
+            {showMenu && (
+              <div className="absolute right-0 top-full mt-2 bg-white shadow-md rounded-lg py-2 w-40">
+                {userData.email === process.env.REACT_APP_ADMIN_EMAIL && (
+                  <Link
+                    to="/newproduct"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                    onClick={closeMobileMenu}
+                  >
+                    New Product
+                  </Link>
+                )}
+                {userData.image ? (
+                  <p
+                    onClick={handleLogout}
+                    className="block px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer"
+                  >
+                    Logout ({userData.firstName})
+                  </p>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                    onClick={closeMobileMenu}
+                  >
+                    Login
+                  </Link>
+                )}
+              </div>
+            )}
           </div>
           <button
             className="text-2xl text-slate-600"
@@ -153,20 +184,33 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <nav className="md:hidden bg-white shadow-md rounded-lg mt-2 py-2">
-          <Link to="/" className="block px-4 py-2 hover:bg-gray-100">
+        <nav className="md:hidden bg-white/50 backdrop-blur-md shadow-lg rounded-lg mt-2 py-2 text-right transition-all duration-900">
+          <Link
+            to="/"
+            className="block px-4 py-2 hover:bg-gray-100"
+            onClick={closeMobileMenu}
+          >
             Home
           </Link>
           <Link
             to="/menu/6519c8d1fa9856a0bf542ac8"
             className="block px-4 py-2 hover:bg-gray-100"
+            onClick={closeMobileMenu}
           >
             Menu
           </Link>
-          <Link to="/about" className="block px-4 py-2 hover:bg-gray-100">
+          <Link
+            to="/about"
+            className="block px-4 py-2 hover:bg-gray-100"
+            onClick={closeMobileMenu}
+          >
             About
           </Link>
-          <Link to="/contact" className="block px-4 py-2 hover:bg-gray-100">
+          <Link
+            to="/contact"
+            className="block px-4 py-2 hover:bg-gray-100"
+            onClick={closeMobileMenu}
+          >
             Contact
           </Link>
         </nav>
