@@ -1,177 +1,9 @@
-// const express = require("express");
-// const cors = require("cors");
-// const mongoose = require("mongoose");
-// const dotenv = require("dotenv").config();
-// const Stripe = require("stripe")
-
-// const app = express();
-// app.use(cors());
-// app.use(express.json({ limit: "10mb" }));
-
-// const PORT = process.env.PORT || 5555;
-
-// //mongodb connection
-// mongoose.set("strictQuery", false);
-// mongoose
-//   .connect(process.env.MONGODB_URL)
-//   .then(() => console.log("Connect to Database"))
-//   .catch((err) => console.log(err));
-
-// //schema 
-// const userSchema = mongoose.Schema({
-//   firstName: String,
-//   lastName: String,
-//   email: {
-//     type: String,
-//     unique: true,
-//   },
-//   password: String,
-//   confirmPassword: String,
-//   image: String,
-// });
-
-// //
-// const userModel = mongoose.model("user", userSchema);
-
-// // api
-// app.get("/", (req, res) => {
-//   res.send("Server is running");
-// });
-
-// // sign up
-// app.post("/signup", async (req, res) => {
-//   // console.log(req.body);
-//   const { email } = req.body;
-
-//   userModel.findOne({ email: email }, (err, result) => {
-//     // console.log(result);
-//     console.log(err);
-//     if (result) {
-//       res.send({ message: "Email id is already register", alert: false });
-//     } else {
-//       const data = userModel(req.body);
-//       const save = data.save();
-//       res.send({ message: "Successfully sign up", alert: true });
-//     }
-//   });
-// });
-
-// //api login
-// app.post("/login", (req, res) => {
-//   // console.log(req.body);
-//   const { email } = req.body;
-//   userModel.findOne({ email: email }, (err, result) => {
-//     if (result) {
-//       const dataSend = {
-//         _id: result._id,
-//         firstName: result.firstName,
-//         lastName: result.lastName,
-//         email: result.email,
-//         image: result.image,
-//       };
-//       console.log(dataSend);
-//       res.send({
-//         message: "Login is successfully",
-//         alert: true,
-//         data: dataSend,
-//       });
-//     } else {
-//       res.send({
-//         message: "Email is not available, please sign up",
-//         alert: false,
-//       });
-//     }
-//   });
-// });
-
-
-// // product section
-// const schemaProduct = mongoose.Schema({
-//   name: String,
-//   brand: String,
-//   category: String,
-//   image: String,
-//   price: String,
-//   description: String,
-// });
-// const productModel = mongoose.model("product", schemaProduct)
-
-// // save product in data
-// // api
-// app.post("/uploadProduct", async (req, res) => {
-//   // console.log(req.body)
-//   const data = await productModel(req.body)
-//   const datasave = await data.save()
-//   res.send({ message: "Upload successfully " })
-// })
-
-
-// // 
-// app.get("/product", async (req, res) => {
-//   const data = await productModel.find({})
-//   res.send(JSON.stringify(data))
-// })
-
-// /****** payment getway */
-
-// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
-
-// app.post("/create-checkout-session", async(req, res) => {
-
-//   try {
-//     const params = {
-//       submit_type: 'pay',
-//       mode: 'payment',
-//       payment_method_types: ['card'],
-//       billing_address_collection: "auto",
-//       shipping_options: [{ shipping_rate: "shr_1O2zSlSIOYJFMlEZgca1o8n9" }],
-
-//       line_items: req.body.map((item) => {
-//         return {
-//           price_data: {
-//             currency: "inr",
-//             product_data: {
-//               name: item.name,
-//               // image: [item.image]
-//             },
-//             unit_amount: item.price * 100,
-//           },
-//           adjustable_quantity: {
-//             enabled: true,
-//             minimum: 1,
-//           },
-//           quantity: item.qty
-//         }
-//       }),
-
-//       success_url : `${process.env.FRONTEND_URL}/success`,
-//       cancel_url : `${process.env.FRONTEND_URL}/cancel`,
-//     }
-
-//     const session = await stripe.checkout.sessions.create(params)
-//     res.status(200).json(session.id)
-
-//   }
-//   catch (err) {
-//     res.status(err.statusCode || 500).json(err.message)
-//   }
-
-// })
-
-// // server is running
-// app.listen(PORT, () => console.log("server is running at port : " + PORT))
-
-
-
-
-
-
-
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 const Stripe = require("stripe");
+const nodemailer = require("nodemailer");
 
 const app = express();
 app.use(cors());
@@ -208,8 +40,11 @@ app.get("/", (req, res) => {
 });
 
 // Sign Up
+const bcrypt = require("bcrypt");
+
+// Sign Up
 app.post("/signup", async (req, res) => {
-  const { email } = req.body;
+  const { email, password, firstName, lastName, image } = req.body;
 
   try {
     const existingUser = await userModel.findOne({ email });
@@ -217,8 +52,19 @@ app.post("/signup", async (req, res) => {
       return res.send({ message: "Email is already registered", alert: false });
     }
 
-    const newUser = new userModel(req.body);
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create and save new user
+    const newUser = new userModel({
+      email,
+      password: hashedPassword,
+      firstName,
+      lastName,
+      image,
+    });
     await newUser.save();
+
     res.send({ message: "Successfully signed up", alert: true });
   } catch (err) {
     console.error(err);
@@ -226,29 +72,39 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+
 // Login
 app.post("/login", async (req, res) => {
-  const { email } = req.body;
+  const { email, password } = req.body;
 
   try {
     const user = await userModel.findOne({ email });
-    if (user) {
-      const dataToSend = {
-        _id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        image: user.image,
-      };
-      res.send({ message: "Login successful", alert: true, data: dataToSend });
-    } else {
-      res.send({ message: "Email not found, please sign up", alert: false });
+    if (!user) {
+      return res.send({ message: "Email not found, please sign up", alert: false });
     }
+
+    // Compare the provided password with the hashed password in the database
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.send({ message: "Invalid password", alert: false });
+    }
+
+    // Send user data if login is successful
+    const dataToSend = {
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      image: user.image,
+    };
+
+    res.send({ message: "Login successful", alert: true, data: dataToSend });
   } catch (err) {
     console.error(err);
     res.status(500).send({ message: "Login failed", alert: false });
   }
 });
+
 
 // Product Schema
 const productSchema = mongoose.Schema({
@@ -285,7 +141,7 @@ app.get("/product", async (req, res) => {
 });
 
 // Stripe Payment Gateway
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 app.post("/create-checkout-session", async (req, res) => {
   try {
@@ -294,12 +150,13 @@ app.post("/create-checkout-session", async (req, res) => {
       mode: "payment",
       payment_method_types: ["card"],
       billing_address_collection: "auto",
-      shipping_options: [{ shipping_rate: "shr_1N0qDnSAq8kJSdzMvlVkJdua" }],
+      // Remove this if you're not using shipping options
+      // shipping_options: [{ shipping_rate: "shr_1N0qDnSAq8kJSdzMvlVkJdua" }],
       line_items: req.body.map((item) => ({
         price_data: {
           currency: "inr",
           product_data: { name: item.name },
-          unit_amount: item.price * 100,
+          unit_amount: item.price * 100, // price in paise
         },
         adjustable_quantity: {
           enabled: true,
@@ -311,13 +168,51 @@ app.post("/create-checkout-session", async (req, res) => {
       cancel_url: `${process.env.FRONTEND_URL}/cancel`,
     };
 
+    // Create the checkout session
     const session = await stripe.checkout.sessions.create(params);
-    res.status(200).json(session.id);
+
+    // Respond with the session ID
+    res.status(200).json({ sessionId: session.id });
   } catch (err) {
     console.error(err);
     res.status(err.statusCode || 500).json({ message: err.message });
   }
 });
 
+
 // Server Start
 app.listen(PORT, () => console.log(`Server is running at port: ${PORT}`));
+
+//Email 
+
+app.post("/contact", async (req, res) => {
+  const { name, email, message } = req.body;
+
+  if (!name || !email || !message) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    // Nodemailer Configuration
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL_USER, // Your email
+        pass: process.env.GMAIL_PASS, // Your email password
+      },
+    });
+
+    const mailOptions = {
+      from: `Contact Form <${process.env.GMAIL_USER}>`,
+      to: process.env.CONTACT_EMAIL, 
+      subject: `New Contact Form Submission from ${name}`,
+      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.json({ message: "Your message has been sent successfully!" });
+  } catch (error) {
+    console.error("Error sending email: ", error);
+    res.status(500).json({ message: "Failed to send your message. Please try again later." });
+  }
+});

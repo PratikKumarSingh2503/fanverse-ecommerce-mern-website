@@ -1,48 +1,70 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import { useSelector } from "react-redux";
 import HomeCard from "../component/HomeCard";
 import CardFeature from "../component/CardFeature";
 import { GrPrevious, GrNext } from "react-icons/gr";
-import FilterProduct from "../component/FilterProduct";
 import AllProduct from "../component/AllProduct";
+import Clients from "../component/Client";
 
 const Home = () => {
+  // Fetching product data from Redux state
   const productData = useSelector((state) => state.product.productList);
-  const homeProductCartList = productData.slice(0, 5);
+
+  // Slicing and filtering product data for specific use cases
+  const homeProductCartList = productData.slice(0, 5); // First 5 products
   const homeProductCartListTShirts = productData.filter(
-    (el) => el.category === "upper garment", []
+    (el) => el.category === "upper garment"
   );
 
+  // Loading placeholders
   const loadingArray = new Array(5).fill(null);
   const loadingArrayFeature = new Array(7).fill(null);
 
+  // Carousel scrolling refs
   const slideProductRef = useRef();
+
+  // Handlers for carousel scrolling
   const nextProduct = () => {
-    slideProductRef.current.scrollLeft += 200;
-  };
-  const preveProduct = () => {
-    slideProductRef.current.scrollLeft -= 200;
+    slideProductRef.current.scrollLeft += 300; // Adjusted scroll distance
   };
 
+  const preveProduct = () => {
+    slideProductRef.current.scrollLeft -= 300;
+  };
 
   return (
-    <div className='p-2 md:p-4'>
-      <div className='md:flex gap-4 py-2 '>
-
-        <div className='md:w-1/2 '>
-          <div className='flex gap-3 bg-slate-300 w-36 px-2 items-center rounded-full'>
-            <p className='text-sm font-medium text-slate-900'>Bike Delivery</p>
-            <img src='https://cdn-icons-png.flaticon.com/512/2972/2972185.png ' className='h-7' />
+    <div className="p-4 md:p-8 ">
+      {/* Header Section */}
+      <div className="md:flex gap-6 py-4 bg-gradient-to-r from-blue-200 via-blue-100 to-bg-slate-100 rounded-lg ">
+        {/* Left Section - Hero Text */}
+        <div className="md:w-1/2  justify-center p-4">
+          <div className="flex items-center gap-3 bg-blue-100 w-max px-3 py-1 rounded-full">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/2972/2972185.png"
+              className="h-6"
+              alt="Bike Delivery Icon"
+            />
+            <p className="text-sm font-medium text-blue-900">
+              Bike Delivery
+              {/* 🚴‍♂️ */}
+            </p>
           </div>
-          <h2 className='text-4xl md:text-7xl font-bold py-3 '>The Fasted Delivery in <span className='text-red-600 '>Your Home</span></h2>
-          <p className='py-3 text-base '>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
-          <button className='font-bold bg-red-500 text-slate-200 px-3 py-2 rounded-md'>Order Now</button>
+          <h2 className="text-4xl md:text-6xl font-bold py-3 text-gray-800">
+            Wear Your <span className="text-red-600">Fandom</span>, Live Your{" "}
+            <span className="text-red-600">Passion!</span>{" "}
+          </h2>
+          <p className="py-3 text-lg text-gray-600">
+          Explore a unique collection of apparel, accessories, and collectibles that let you express your love for your favorite worlds. Make your fandom part of your style!
+          </p>
+          <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-semibold shadow-lg transition transform hover:scale-105">
+            Order Now
+          </button>
         </div>
 
-        <div className='md:w-1/2 flex flex-wrap gap-5 p-4 justify-center'>
-          {
-            homeProductCartList[0] ? homeProductCartList.map((el) => {
-              return (
+        {/* Right Section - Product Preview */}
+        <div className="md:w-1/2 flex flex-wrap gap-5 p-4 justify-center">
+          {homeProductCartList.length > 0
+            ? homeProductCartList.map((el) => (
                 <HomeCard
                   key={el._id}
                   id={el._id}
@@ -52,41 +74,42 @@ const Home = () => {
                   brand={el.brand}
                   category={el.category}
                 />
-              );
-            })
-              :
-              loadingArray.map((el, index) => {
-                return (
-                  <HomeCard
-                    key={index + "loading"}
-                    loading={"Loading..."}
-                  />
-                )
-              })
-          }
+              ))
+            : loadingArray.map((_, index) => (
+                <HomeCard key={index} loading="Loading..." />
+              ))}
         </div>
       </div>
 
-      <div className="">
-        <div className="flex w-full items-center ">
-          <h2 className="font-bold text-2xl text-slate-800 mb-4 ">
-            Over-sized T-Shirts
+      {/* T-Shirts Section */}
+      <div className="mt-8">
+        <div className="flex items-center justify-between">
+          <h2 className="font-bold text-3xl text-gray-800">
+            Graphic Printed T-Shirts
           </h2>
-          <div className="ml-auto flex gap-4 ">
-            <button onClick={preveProduct} className="bg-slate-300 hover:bg-slate-400 text-lg p-1 rounded ">
+          <div className="flex gap-4">
+            <button
+              onClick={preveProduct}
+              className="bg-blue-100 hover:bg-blue-200 text-xl p-2 rounded-full shadow"
+            >
               <GrPrevious />
             </button>
-            <button onClick={nextProduct} className="bg-slate-300 hover:bg-slate-400 text-lg p-1 rounded ">
+            <button
+              onClick={nextProduct}
+              className="bg-blue-100 hover:bg-blue-200 text-xl p-2 rounded-full shadow"
+            >
               <GrNext />
             </button>
           </div>
         </div>
-        <div className="flex gap-5 overflow-scroll scrollbar-none scroll-smooth transition-all" ref={slideProductRef}>
-          {
-            homeProductCartListTShirts[0] ? homeProductCartListTShirts.map((el) => {
-              return (
+        <div
+          className="flex gap-5 overflow-x-scroll scrollbar-none py-4"
+          ref={slideProductRef}
+        >
+          {homeProductCartListTShirts.length > 0
+            ? homeProductCartListTShirts.map((el) => (
                 <CardFeature
-                  key={el._id + "t-shirt"}
+                  key={el._id}
                   id={el._id}
                   name={el.name}
                   brand={el.brand}
@@ -94,18 +117,18 @@ const Home = () => {
                   price={el.price}
                   image={el.image}
                 />
-              );
-            })
-
-              :
-              loadingArrayFeature.map((el, index) => (
-                <CardFeature loading="Loading..." key={index + "cartLoading"} />
               ))
-          }
+            : loadingArrayFeature.map((_, index) => (
+                <CardFeature key={index} loading="Loading..." />
+              ))}
         </div>
       </div>
 
-      <AllProduct heading={"Your Product"} />
+      {/* All Products Section */}
+      <AllProduct heading="Discover Our Products" />
+
+      {/* Client Testimonials */}
+      <Clients />
     </div>
   );
 };

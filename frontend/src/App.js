@@ -6,6 +6,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useEffect } from "react";
 import { setDataProduct } from "./redux/productSlice";
 import { useDispatch, useSelector } from "react-redux";
+import Footer from "./component/Footer";
 
 function App() {
   const dispatch = useDispatch()
@@ -28,7 +29,7 @@ function App() {
           <Outlet />
 
         </main>
-
+        <Footer />
 
       </div></>
   );
