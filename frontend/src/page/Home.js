@@ -33,7 +33,7 @@ const Home = () => {
   };
 
   return (
-    <div className="p-4 md:p-8 ">
+    <div className="p-4 md:p-4 ">
       {/* Header Section */}
       <div className="md:flex gap-6 py-4 bg-gradient-to-r from-blue-200 via-blue-100 to-bg-slate-100 rounded-lg ">
         {/* Left Section - Hero Text */}
@@ -62,7 +62,7 @@ const Home = () => {
         </div>
 
         {/* Right Section - Product Preview */}
-        <div className="md:w-1/2 flex flex-wrap gap-5 p-4 justify-center">
+        <div className="md:w-1/2 flex flex-wrap gap-5 py-4 justify-center">
           {homeProductCartList.length > 0
             ? homeProductCartList.map((el) => (
                 <HomeCard
