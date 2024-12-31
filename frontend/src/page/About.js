@@ -1,4 +1,5 @@
 import React from "react";
+import about from '../Image/aboutpic.png'
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
@@ -35,7 +36,7 @@ const About = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.5 }}
         >
-          Fanverse Merch Hub - Your Fandom, Your Style
+          Fanverse Merch Hub - Your Fandom, Your Passion
         </motion.p>
         <div className="absolute inset-0 bg-[url('https://via.placeholder.com/1920x1080')] bg-cover opacity-20"></div>
       </section>
@@ -55,7 +56,7 @@ const About = () => {
           </p>
         </div>
         <motion.img
-          src="https://via.placeholder.com/600x400"
+          src={about}
           alt="Our Journey"
           className="md:w-1/2 rounded-lg shadow-lg"
           whileHover={{ scale: 1.05 }}
@@ -152,7 +153,7 @@ const About = () => {
       {/* Call-to-Action Section */}
       <section className="bg-purple-600 py-16 text-center text-white">
         <h2 className="text-3xl font-semibold">Join the Fanverse Experience</h2>
-        <p className="mt-4">Discover unique Marvel-themed merchandise today!</p>
+        <p className="mt-4">Discover unique animated-themed merchandise today!</p>
         <motion.button
           className="mt-6 px-8 py-3 bg-white text-purple-600 font-medium rounded-lg shadow-md"
           whileHover={{ scale: 1.1 }}
