@@ -1,5 +1,5 @@
 import React from "react";
-import about from '../Image/aboutpic.png'
+import about from '../Image/Screenshot (38).png'
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
@@ -38,7 +38,7 @@ const About = () => {
         >
           Fanverse Merch Hub - Your Fandom, Your Passion
         </motion.p>
-        <div className="absolute inset-0 bg-[url('https://via.placeholder.com/1920x1080')] bg-cover opacity-20"></div>
+        {/* <div className="absolute inset-0 bg-[url('https://via.placeholder.com/1920x1080')] bg-cover opacity-20"></div> */}
       </section>
 
       {/* Story Section */}
