@@ -1,5 +1,5 @@
 import React from "react";
-import about from '../Image/aboutPic.png'
+import about from '../Image/aboutpic.png'
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
