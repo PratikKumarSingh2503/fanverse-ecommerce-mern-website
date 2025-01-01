@@ -1,4 +1,4 @@
-![Screenshot (160)](https://github.com/user-attachments/assets/12474ed1-8dfe-4109-9da3-e0d6167ecc20)
+[![aboutpic](https://github.com/user-attachments/assets/d5620369-a665-493f-8b82-1fabac42ac76)](https://fanverse-ecommerce-mern-website.vercel.app/static/media/aboutpic.de57dd1662c50ae427c0.png)
 <br>
 <br>
 <ul>
